@@ -10,7 +10,7 @@
     - setup:
     - assert:
         that:
-          - "{{ansible_memory_mb.swap.total >= ((swapfile_size|int)/1024/1024)}}"
+          - "{{ansible_memory_mb.swap.total >= ((swapfile_size|int)/1024/1024-1)}}"
 
 - hosts: all
   vars:
@@ -23,4 +23,4 @@
     - setup:
     - assert:
         that:
-          - "{{ansible_memory_mb.swap.total < ((swapfile_size|int)/1024/1024)}}"
+          - "{{ansible_memory_mb.swap.total < ((swapfile_size|int)/1024/1024-1)}}"

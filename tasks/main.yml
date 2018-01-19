@@ -1,0 +1,55 @@
+---
+- set_fact:
+    __swapfile_recreate: false
+
+- name: Check current swap size
+  set_fact:
+    __swapfile_recreate="{{ansible_memory_mb.swap.total < ((swapfile_size|int)/1024/1024-1)}}"
+  when: swapfile_enabled
+
+# remove swapfile
+- block:
+  - name: Turn off swap
+    shell:
+      test -e /swapfile && ( swapoff /swapfile && echo 'ok' ) || /bin/true
+    changed_when: __swapfile_off.stdout == 'ok'
+    register: __swapfile_off
+
+  - name: Remove old swapfile
+    file:
+      path=/swapfile
+      state=absent
+
+  - name: Remove fstab record for swapfile
+    mount:
+      path: none
+      src: /swapfile
+      state: absent
+
+  when: __swapfile_recreate | default(false) or not swapfile_enabled
+
+# create new swapfile
+- block:
+  - name: Create new swapfile
+    shell: dd if=/dev/zero of=/swapfile bs=1024 count="{{((swapfile_size|int)/1024)|replace('.0', '')}}"
+
+  - name: Set right permissions on swapfile
+    file:
+      path=/swapfile
+      mode=0600
+
+  - name: Make swap area in swapfile
+    shell: mkswap /swapfile
+
+  - name: Create fstab record for swapfile
+    mount:
+      name: none
+      src: /swapfile
+      fstype: swap
+      opts: sw
+      state: present
+
+  - name: Enabling the swapfile
+    shell: swapon /swapfile
+
+  when: __swapfile_recreate | default(false)

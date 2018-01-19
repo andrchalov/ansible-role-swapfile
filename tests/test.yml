@@ -1,0 +1,26 @@
+---
+- hosts: all
+  vars:
+    swapfile_size: 2147483648
+  roles:
+    - name: role_under_test
+      swapfile_enabled: true
+
+  post_tasks:
+    - setup:
+    - assert:
+        that:
+          - "{{ansible_memory_mb.swap.total >= ((swapfile_size|int)/1024/1024)}}"
+
+- hosts: all
+  vars:
+    swapfile_size: 2147483648
+  roles:
+    - name: role_under_test
+      swapfile_enabled: false
+
+  post_tasks:
+    - setup:
+    - assert:
+        that:
+          - "{{ansible_memory_mb.swap.total < ((swapfile_size|int)/1024/1024)}}"

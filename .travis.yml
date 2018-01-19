@@ -1,0 +1,12 @@
+---
+services: docker
+
+script:
+  - export container_id=$(date +%s)
+  - export cleanup=false
+
+  # Run tests.
+  - ${PWD}/tests/test.sh
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/

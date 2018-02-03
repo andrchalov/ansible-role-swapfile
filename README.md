@@ -1,6 +1,6 @@
 # ansible-swapfile
 
-[![Build Status](https://travis-ci.org/andrchalov/ansible-swapfile.svg?branch=master)](https://travis-ci.org/andrchalov/ansible-swapfile)
+[![Build Status](https://travis-ci.org/andrchalov/ansible-role-swapfile.svg?branch=master)](https://travis-ci.org/andrchalov/ansible-role-swapfile)
 
 An Ansible Role that configures swap file on Linux Ubuntu.
 
